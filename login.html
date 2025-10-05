@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TagIT — Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+
+  <style>
+    .fade {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="p-6 flex flex-col items-center justify-center">
+    <a href="/" class="flex flex-col items-center justify-center gap-3">
+      <svg width="220" height="70" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+        <rect rx="10" width="360" height="120" fill="#0F1724"/>
+        <path d="M40 30 L110 30 L150 60 L110 90 L40 90 Z" fill="#FF7F2A"/>
+        <circle cx="220" cy="60" r="18" fill="#10724B"/>
+        <text x="80" y="75" font-family="Segoe UI, Roboto, Arial" font-size="44" fill="#FFFFFF" font-weight="700">TagIT</text>
+      </svg>
+    </a>
+  </header>
+
+  <!-- QUOTE -->
+  <section class="text-center py-4 bg-slate-800/40">
+    <p class="italic text-lg text-saffron" id="quote">“Empowering citizens to report, respond, and make change.”</p>
+  </section>
+
+  <!-- MAIN FORM -->
+  <main class="flex-grow container mx-auto px-4 py-10 flex justify-center items-center">
+    <!-- CITIZEN LOGIN/REGISTER FORM -->
+    <div id="citizenForm" class="max-w-xl w-full bg-slate-800/50 p-8 rounded-xl shadow-lg fade opacity-100">
+      <h2 class="text-3xl font-bold mb-6 text-center text-saffron">Citizen Registration</h2>
+      <form id="signupForm" class="space-y-4">
+        <input id="name" placeholder="Full name" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+        <input id="phone" placeholder="Phone number" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+        <input id="email" placeholder="Email" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+        <input id="aadhaar" placeholder="Aadhaar (12 digits)" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+
+        <div class="flex gap-3">
+          <input id="otp" placeholder="OTP (demo)" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+          <button id="sendOtp" type="button" class="px-4 py-2 bg-saffron text-slate-900 font-semibold rounded hover:scale-105 transition">Send OTP</button>
+        </div>
+
+        <div class="flex gap-3 justify-center mt-4">
+          <button id="createBtn" type="button" class="px-8 py-3 bg-saffron text-slate-900 font-semibold rounded hover:scale-105 transition">Create Account</button>
+          <a class="px-8 py-3 border border-gray-700 rounded hover:bg-gray-800 transition" href="/">Cancel</a>
+        </div>
+      </form>
+
+      <div class="mt-6 text-center">
+        <button id="switchToAuthority" class="text-orange-400 underline hover:text-orange-300 transition">
+          Login as Authority
+        </button>
+      </div>
+    </div>
+
+    <!-- AUTHORITY LOGIN FORM -->
+    <div id="authorityForm" class="max-w-xl w-full bg-gradient-to-br from-orange-500/10 via-slate-800/70 to-slate-900/80 p-8 rounded-xl shadow-lg border border-orange-400/30 fade opacity-0 hidden">
+      <h2 class="text-3xl font-bold mb-6 text-center text-orange-400">Authority Login</h2>
+      <p class="text-center text-gray-300 mb-6 italic">“Saluting the brave — those who protect and serve our citizens.”</p>
+
+      <form id="authorityLoginForm" class="space-y-4">
+        <select id="authorityType" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700">
+          <option value="">Select Authority Type</option>
+          <option value="Police">Police Department</option>
+          <option value="Fire">Fire & Rescue</option>
+          <option value="Health">Health Department</option>
+          <option value="Nagar Nigam">Nagar Nigam</option>
+          <option value="Safety">Public Safety</option>
+        </select>
+
+        <input id="authorityEmail" placeholder="Official Email" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+        <input id="authorityPassword" type="password" placeholder="Password" class="p-3 w-full rounded bg-slate-900/60 border border-gray-700" />
+
+        <div class="flex justify-center mt-6 gap-3">
+          <button id="authorityLoginBtn" type="button" class="px-8 py-3 bg-orange-500 text-slate-900 font-bold rounded hover:scale-105 transition">Login</button>
+          <button id="backToCitizen" type="button" class="px-8 py-3 border border-gray-600 rounded hover:bg-gray-800 transition">Back</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-800 text-gray-400 text-sm py-8 mt-8">
+    <p class="text-center text-gray-500">© 2025 TagIT. All rights reserved.</p>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script src="/static/app.js"></script>
+  <script>
+    const citizenForm = document.getElementById('citizenForm');
+    const authorityForm = document.getElementById('authorityForm');
+    const quote = document.getElementById('quote');
+    const switchToAuthority = document.getElementById('switchToAuthority');
+    const backToCitizen = document.getElementById('backToCitizen');
+
+    switchToAuthority.addEventListener('click', () => {
+      citizenForm.classList.add('opacity-0');
+      setTimeout(() => {
+        citizenForm.classList.add('hidden');
+        authorityForm.classList.remove('hidden');
+        setTimeout(() => authorityForm.classList.add('opacity-100'), 50);
+        quote.textContent = "“Saluting the brave — those who protect and serve our citizens.”";
+      }, 300);
+    });
+
+    backToCitizen.addEventListener('click', () => {
+      authorityForm.classList.remove('opacity-100');
+      setTimeout(() => {
+        authorityForm.classList.add('hidden');
+        citizenForm.classList.remove('hidden');
+        setTimeout(() => citizenForm.classList.remove('opacity-0'), 50);
+        quote.textContent = "“Empowering citizens to report, respond, and make change.”";
+      }, 300);
+    });
+
+    // Citizen signup
+    document.getElementById('sendOtp').addEventListener('click', () => alert('OTP sent (demo). Use 1234 to proceed.'));
+    document.getElementById('createBtn').addEventListener('click', () => {
+      const aad = document.getElementById('aadhaar').value.trim();
+      if (!/^\d{12}$/.test(aad)) return alert('Aadhaar must be 12 digits (demo validation).');
+      const user = {
+        name: document.getElementById('name').value || 'Demo User',
+        phone: document.getElementById('phone').value || '0000000000',
+        email: document.getElementById('email').value || '',
+        aadhaar: aad
+      };
+      localStorage.setItem('tagit_user', JSON.stringify(user));
+      alert('Account created (demo). Redirecting to dashboard.');
+      location.href = '/dashboard.html';
+    });
+
+    // Authority login
+    document.getElementById('authorityLoginBtn').addEventListener('click', () => {
+      const type = document.getElementById('authorityType').value;
+      const email = document.getElementById('authorityEmail').value;
+      const pass = document.getElementById('authorityPassword').value;
+
+      if (!type || !email || !pass) return alert('Please fill all fields.');
+      localStorage.setItem('tagit_authority', JSON.stringify({ type, email }));
+      alert('Welcome, ' + type + ' Authority. Redirecting...');
+      location.href = '/authority-dashboard.html';
+    });
+  </script>
+</body>
+</html>

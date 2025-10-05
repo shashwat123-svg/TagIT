@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TagIT — Report</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen">
+  <header class="p-4 container mx-auto flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <!-- Larger SVG Logo -->
+      <svg width="200" height="65" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+        <rect rx="10" width="360" height="120" fill="#0F1724"/>
+        <path d="M40 30 L110 30 L150 60 L110 90 L40 90 Z" fill="#FF7F2A"/>
+        <circle cx="220" cy="60" r="18" fill="#10724B"/>
+        <text x="80" y="75" font-family="Segoe UI, Roboto, Arial" font-size="44" fill="#FFFFFF" font-weight="700">TagIT</text>
+      </svg>
+    </a>
+    <div>
+      <a class="px-4 py-2 rounded border border-gray-700 hover:bg-gray-800" href="/login.html">Login</a>
+      <a class="px-4 py-2 ml-3 rounded bg-saffron text-slate-900 font-semibold" href="/dashboard.html">Dashboard</a>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Left: Tag Info -->
+      <aside class="md:col-span-1 bg-slate-800/50 p-6 rounded-lg">
+        <div id="tagHeader" class="flex items-center gap-4">
+          <div class="text-4xl p-3 rounded bg-slate-900/60" id="tagIcon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div>
+            <h2 id="tagTitle" class="text-2xl font-bold">Tag</h2>
+            <p id="tagDesc" class="text-gray-300 mt-1">Tag description</p>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="font-semibold">What to capture</h4>
+          <ul id="captureList" class="text-gray-300 mt-2 list-disc ml-5">
+            <li>Address signage</li>
+            <li>Extent of incident</li>
+            <li>Nearby landmarks</li>
+          </ul>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="font-semibold">Urgency & backup</h4>
+          <p class="text-gray-300 mt-2">For Violence/Fire/SOS/Health, the system will auto-escalate to police if not accepted in <strong>6 minutes</strong>.</p>
+          <div class="mt-3 text-sm text-gray-400">(Demo - you can shorten timer in code for testing.)</div>
+        </div>
+
+        <!-- New Self Help Section -->
+        <div class="mt-8">
+          <h4 class="font-semibold text-orange-400 text-lg mb-2">🆘 Self Help / Safety Tips</h4>
+          <ul id="selfHelpTips" class="list-disc ml-5 text-gray-300 text-sm space-y-1">
+            <li>Tips will appear here based on the tag you selected.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Right: Report Form -->
+      <section class="md:col-span-2 bg-slate-800/40 p-6 rounded-lg">
+        <form id="reportForm" class="space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-300">Tag</label>
+              <input id="tagInput" name="tag" readonly class="mt-1 p-3 w-full bg-slate-900/60 rounded" />
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-300">Priority</label>
+              <select id="priority" class="mt-1 p-3 w-full rounded bg-slate-900/60">
+                <option value="normal">Normal</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm text-gray-300">Describe the situation (optional)</label>
+            <textarea id="description" rows="3" class="mt-1 p-3 w-full rounded bg-slate-900/60"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm text-gray-300">Upload Photo / Short Video</label>
+            <div id="dropzone" class="mt-2 p-6 dashed rounded border-2 border-dashed border-gray-700 hover:border-saffron transition">
+              <input id="fileInput" type="file" accept="image/*,video/*" class="hidden" />
+              <div class="text-center text-gray-400">
+                <p>Drag & drop or <button id="pickFile" type="button" class="text-saffron underline">choose a file</button></p>
+                <div id="preview" class="mt-4"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-300">Use Live Location</label>
+              <button id="useLocation" type="button" class="mt-1 w-full p-3 rounded bg-slate-900/60">Get Current Location</button>
+              <div id="locDisplay" class="text-sm text-gray-400 mt-2"></div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-300">Or Enter Address + Pincode</label>
+              <input id="address" class="mt-1 p-3 w-full rounded bg-slate-900/60" placeholder="Street, Area" />
+              <input id="pincode" class="mt-2 p-3 w-full rounded bg-slate-900/60" placeholder="Pincode (6 digits)" />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button id="submitBtn" class="px-6 py-3 bg-saffron rounded text-slate-900 font-semibold">Send Report</button>
+            <div id="timerWrap" class="text-sm text-gray-300 hidden">
+              Backup Escalation in: <span id="timerDisplay" class="font-mono ml-2">06:00</span>
+            </div>
+            <div id="statusMsg" class="ml-auto text-sm"></div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- Toasts -->
+  <div id="toastContainer" class="fixed top-6 right-6 space-y-3 z-50"></div>
+
+  <script src="/static/app.js"></script>
+  <script>
+    (function(){
+      const urlParams = new URLSearchParams(location.search);
+      const tag = urlParams.get('tag') || 'General';
+      window.tagitPageInit && window.tagitPageInit(tag);
+    })();
+  </script>
+</body>
+</html>

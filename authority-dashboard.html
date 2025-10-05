@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TagIT — Authority Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+
+  <style>
+    .fade {
+      transition: opacity 0.4s ease, transform 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="p-4 flex items-center justify-between container mx-auto border-b border-slate-700/60">
+    <div class="flex items-center gap-3">
+      <svg width="140" height="44" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+        <rect rx="10" width="360" height="120" fill="#0F1724"/>
+        <path d="M40 30 L110 30 L150 60 L110 90 L40 90 Z" fill="#FF7F2A"/>
+        <circle cx="220" cy="60" r="18" fill="#10724B"/>
+        <text x="80" y="75" font-family="Segoe UI, Roboto, Arial" font-size="44" fill="#FFFFFF" font-weight="700">TagIT</text>
+      </svg>
+      <h1 class="text-xl font-semibold text-saffron">Authority Dashboard</h1>
+    </div>
+    <button id="logoutBtn" class="px-4 py-2 rounded bg-saffron text-slate-900 font-semibold hover:scale-105 transition">Logout</button>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container mx-auto px-4 py-8 flex-grow">
+    <section id="overview" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></section>
+
+    <section id="reportsSection" class="mt-10 hidden fade opacity-0">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="selectedTagTitle" class="text-2xl font-bold text-saffron">Reports</h2>
+        <button id="backBtn" class="px-4 py-2 border border-gray-600 rounded hover:bg-gray-800 transition">
+          <i class="fa-solid fa-arrow-left mr-2"></i>Back
+        </button>
+      </div>
+
+      <div id="reportsList" class="space-y-4"></div>
+    </section>
+
+    <!-- MAP SECTION -->
+    <section class="mt-10">
+      <h2 class="text-2xl font-bold text-saffron mb-4">Live Incident Map</h2>
+      <div id="map" class="w-full h-[500px] rounded-xl border border-slate-700"></div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-500 py-6 border-t border-slate-700/60">
+    © 2025 TagIT — Authority Panel. For official use only.
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const authority = JSON.parse(localStorage.getItem('tagit_authority') || 'null');
+    const overview = document.getElementById('overview');
+    const reportsSection = document.getElementById('reportsSection');
+    const reportsList = document.getElementById('reportsList');
+    const selectedTagTitle = document.getElementById('selectedTagTitle');
+    const backBtn = document.getElementById('backBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (!authority) {
+      alert('Unauthorized access. Please login first.');
+      location.href = 'login.html';
+    }
+
+    const authorityType = authority.type;
+    const reports = JSON.parse(localStorage.getItem('tagit_reports') || '[]');
+
+    // Define access control
+    const accessMap = {
+      'Police': ['Fire', 'Violence', 'SOS', 'Health', 'Animal', 'Complaints', 'General'],
+      'Fire': ['Fire'],
+      'Health': ['Health', 'Animal'],
+      'Nagar Nigam': ['Complaints'],
+      'Safety': ['Complaints']
+    };
+
+    const allowedTags = accessMap[authorityType] || [];
+    const filteredReports = reports.filter(r => allowedTags.includes(r.tag));
+
+    // Group reports
+    const grouped = {};
+    filteredReports.forEach(r => {
+      const tag = r.tag || 'General';
+      if (!grouped[tag]) grouped[tag] = [];
+      grouped[tag].push(r);
+    });
+
+    // Tag icons
+    const tagIcons = {
+      'Fire': 'fa-fire',
+      'Violence': 'fa-user-shield',
+      'SOS': 'fa-bullhorn',
+      'Health': 'fa-hospital',
+      'Animal': 'fa-paw',
+      'Complaints': 'fa-city',
+      'General': 'fa-triangle-exclamation'
+    };
+
+    // Overview cards
+    if (Object.keys(grouped).length === 0) {
+      overview.innerHTML = `
+        <div class='text-center col-span-full p-10 text-gray-400 bg-slate-800/50 rounded-lg border border-slate-700'>
+          No reports available for your department yet.
+        </div>`;
+    } else {
+      Object.keys(grouped).forEach(tag => {
+        const count = grouped[tag].length;
+        const icon = tagIcons[tag] || 'fa-triangle-exclamation';
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800/60 p-6 rounded-xl shadow hover:scale-105 hover:shadow-lg transition cursor-pointer flex flex-col items-center justify-center text-center';
+        card.innerHTML = `
+          <div class="text-saffron text-4xl mb-3"><i class="fa-solid ${icon}"></i></div>
+          <h3 class="text-xl font-semibold">${tag}</h3>
+          <p class="text-gray-400 mt-2 text-sm">${count} Report${count > 1 ? 's' : ''}</p>
+        `;
+        card.addEventListener('click', () => showReports(tag));
+        overview.appendChild(card);
+      });
+    }
+
+    // Show detailed reports
+    function showReports(tag) {
+      selectedTagTitle.textContent = tag + ' Reports';
+      reportsList.innerHTML = '';
+      const data = grouped[tag] || [];
+
+      data.forEach((r, index) => {
+        const mediaHTML = r.mediaData 
+          ? (r.mediaData.startsWith('data:image')
+              ? '<img src="' + r.mediaData + '" class="rounded mt-3 max-h-56 border border-slate-700">'
+              : '<video src="' + r.mediaData + '" controls class="rounded mt-3 max-h-56 border border-slate-700"></video>')
+          : '';
+
+        const locationText = r.address 
+          ? r.address 
+          : (r.location ? 'Lat ' + r.location.lat + ', Lon ' + r.location.lon : '—');
+
+        const item = document.createElement('div');
+        item.className = 'p-5 rounded-lg bg-slate-800/70 border border-gray-700 hover:border-saffron/30 transition';
+        item.innerHTML = `
+          <div class="flex justify-between items-start">
+            <h4 class="text-lg font-semibold text-saffron">${r.tag}</h4>
+            <div class="text-sm text-gray-400">${new Date(r.timestamp).toLocaleString()}</div>
+          </div>
+          <p class="mt-2 text-gray-300">${r.description || 'No description provided.'}</p>
+          <p class="text-sm text-gray-400 mt-2"><i class="fa-solid fa-location-dot text-saffron mr-2"></i>${locationText}</p>
+          <p class="text-sm text-gray-400 mt-1"><i class="fa-solid fa-user text-saffron mr-2"></i>${r.user?.name || 'Anonymous User'}</p>
+          ${mediaHTML}
+          <div class="mt-3 text-sm text-gray-400"><strong>Status:</strong> ${r.status || 'Sent'}</div>
+          <button class="mt-4 px-4 py-2 bg-orange-500 text-slate-900 font-bold rounded hover:bg-green-500 transition take-action-btn" data-id="${index}">
+            Take Action
+          </button>
+        `;
+        reportsList.appendChild(item);
+      });
+
+      overview.classList.add('hidden');
+      reportsSection.classList.remove('hidden');
+      setTimeout(() => reportsSection.classList.add('opacity-100'), 50);
+
+      // Action button behavior
+      document.querySelectorAll('.take-action-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          btn.classList.remove('bg-orange-500');
+          btn.classList.add('bg-green-500', 'text-white');
+          btn.textContent = 'Action Taken';
+          const reports = JSON.parse(localStorage.getItem('tagit_reports') || '[]');
+          const idx = btn.dataset.id;
+          if (reports[idx]) {
+            reports[idx].status = 'Accepted - Help on the Way';
+            localStorage.setItem('tagit_reports', JSON.stringify(reports));
+          }
+          alert('Marked as Action Taken');
+        });
+      });
+    }
+
+    // Back button
+    backBtn.addEventListener('click', () => {
+      reportsSection.classList.remove('opacity-100');
+      setTimeout(() => {
+        reportsSection.classList.add('hidden');
+        overview.classList.remove('hidden');
+      }, 300);
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('tagit_authority');
+      alert('Logged out successfully.');
+      location.href = 'login.html';
+    });
+
+    // ===== Google Map =====
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 22.7196, lng: 75.8577 },
+        zoom: 12,
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#0f1724" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road", stylers: [{ color: "#2e2e2e" }] }
+        ]
+      });
+
+      const reports = JSON.parse(localStorage.getItem('tagit_reports') || '[]');
+
+      reports.forEach(r => {
+        if (!r.location) return;
+
+        let color;
+        if (['Fire', 'SOS', 'Violence'].includes(r.tag)) color = "red";
+        else if (['Health', 'Animal'].includes(r.tag)) color = "yellow";
+        else color = "blue";
+
+        const marker = new google.maps.Marker({
+          position: { lat: parseFloat(r.location.lat), lng: parseFloat(r.location.lon) },
+          map: map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: color,
+            fillOpacity: 1,
+            strokeWeight: 1,
+            strokeColor: "#fff",
+          },
+          title: `${r.tag}: ${r.description || 'No description'}`
+        });
+
+        const info = new google.maps.InfoWindow({
+          content: `
+            <div style="color:#000; font-size:14px">
+              <strong>${r.tag}</strong><br>
+              ${r.description || 'No description'}<br>
+              <small>${r.address || 'Unknown Location'}</small>
+            </div>`
+        });
+
+        marker.addListener("click", () => info.open(map, marker));
+      });
+    }
+  </script>
+
+  <!-- Load Google Maps API -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFVoFGwN9cj-Q7Gkp5bvxrl2pTs8p_QeA&callback=initMap"></script>
+</body>
+</html>

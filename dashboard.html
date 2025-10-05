@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TagIT — Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-900 text-gray-100 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="p-6 container mx-auto flex items-center justify-between">
+    <!-- Logo (center-left) -->
+    <a href="/" class="flex items-center gap-3">
+      <svg width="200" height="65" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+        <rect rx="10" width="360" height="120" fill="#0F1724"/>
+        <path d="M40 30 L110 30 L150 60 L110 90 L40 90 Z" fill="#FF7F2A"/>
+        <circle cx="220" cy="60" r="18" fill="#10724B"/>
+        <text x="80" y="75" font-family="Segoe UI, Roboto, Arial" font-size="44" fill="#FFFFFF" font-weight="700">TagIT</text>
+      </svg>
+    </a>
+
+    <!-- New Report Button -->
+    <a href="/tag.html?tag=SOS" 
+       class="px-6 py-3 bg-orange-500 text-slate-900 font-bold rounded-full shadow-md hover:bg-orange-400 hover:shadow-[0_0_20px_#fb923c] transition-all flex items-center gap-2">
+      <i class="fa-solid fa-plus"></i> New Report
+    </a>
+  </header>
+
+  <!-- PROMPT BELOW HEADER -->
+  <section class="text-center mt-2 text-gray-300">
+    <p class="italic text-lg text-saffron">“To report an incident, click on <strong>New Report</strong> above.”</p>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center text-orange-400 mb-6">My Reports</h1>
+
+    <!-- Reports List -->
+    <div id="reportsList" class="space-y-4">
+      <!-- populated dynamically -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-800 text-gray-400 text-sm py-6 text-center">
+    © 2025 TagIT. All rights reserved.
+  </footer>
+  <script src="/static/app.js"></script>
+  <script>
+    window.tagitDashboardInit = function () {
+      const container = document.getElementById('reportsList');
+      const reports = JSON.parse(localStorage.getItem('tagit_reports') || '[]');
+      container.innerHTML = '';
+  
+      if (reports.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-400 py-10 bg-slate-800/50 rounded-lg">
+            <i class="fa-solid fa-folder-open text-4xl mb-3 text-gray-600"></i>
+            <p>No reports yet. Start by creating your first one!</p>
+          </div>`;
+        return;
+      }
+  
+      reports.forEach((r) => {
+        const icons = {
+          Fire: 'fa-fire text-red-400',
+          Violence: 'fa-user-shield text-yellow-400',
+          SOS: 'fa-bullhorn text-pink-400',
+          Health: 'fa-kit-medical text-green-400',
+          Animal: 'fa-paw text-orange-400',
+          Complaints: 'fa-city text-blue-400',
+          General: 'fa-tag text-gray-400'
+        };
+        const iconClass = icons[r.tag] || icons.General;
+  
+        let statusColor = 'text-yellow-400';
+        if (r.status && r.status.includes('Accepted')) statusColor = 'text-green-400';
+        if (r.status === 'Resolved') statusColor = 'text-gray-400';
+  
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800/60 p-5 rounded-lg shadow-md hover:bg-slate-800 transition transform hover:scale-[1.02]';
+        card.innerHTML = `
+          <div class="flex items-start gap-4">
+            <div class="text-3xl"><i class="fa-solid ${iconClass}"></i></div>
+            <div>
+              <h3 class="text-xl font-semibold text-orange-300">${r.tag}</h3>
+              <p class="text-gray-400 mt-1">${r.description || 'No description provided.'}</p>
+              <div class="text-sm text-gray-500 mt-2">
+                <i class="fa-solid fa-location-dot"></i> ${r.address || (r.location ? 'Lat ' + r.location.lat + ', Lon ' + r.location.lon : '—')}
+                <span class="ml-3"><i class="fa-regular fa-clock"></i> ${new Date(r.timestamp).toLocaleString()}</span>
+              </div>
+              <div class="mt-2 text-sm font-semibold ${statusColor}">
+                ${r.status || 'Report Sent'}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    };
+  
+    // Initialize dashboard
+    window.tagitDashboardInit();
+  </script>  
+</body>
+</html>

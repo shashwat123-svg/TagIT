@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TagIT — Report Emergencies & Civic Issues</title>
+  
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+    <!-- ✅ Local Font Awesome -->
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+  
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="container mx-auto px-4 py-6 flex items-center justify-between border-b border-slate-700/50 backdrop-blur-sm bg-slate-800/30 shadow-md shadow-slate-900/40">
+    <a href="/" class="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
+      <svg width="180" height="60" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" aria-labelledby="tagitTitle">
+        <title id="tagitTitle">TagIT - civic emergency reporting</title>
+        <rect rx="12" x="0" y="0" width="360" height="120" fill="#0F1724"/>
+        <path d="M40 30 L110 30 L150 60 L110 90 L40 90 Z" fill="#FF7F2A"/>
+        <circle cx="220" cy="60" r="20" fill="#10724B"/>
+        <text x="80" y="75" font-family="Segoe UI, Roboto, Arial" font-size="42" fill="#FFFFFF" font-weight="700">TagIT</text>
+      </svg>
+    </a>
+
+    <nav class="hidden md:flex gap-6 items-center text-gray-300">
+      <a class="hover:text-[#FF7F2A] transition" href="#how">How it works</a>
+      <a class="hover:text-[#FF7F2A] transition" href="#tags">Tags</a>
+      <a class="hover:text-[#FF7F2A] transition" href="/login.html">Login</a>
+      <a class="bg-[#FF7F2A] px-4 py-2 rounded text-slate-900 font-semibold shadow-md hover:shadow-[#FF7F2A]/50 hover:scale-105 transition-transform" href="/tag.html?tag=SOS">
+        <i class="fa-solid fa-bullhorn mr-2"></i> Report Now
+      </a>
+    </nav>
+  </header>
+
+  <main class="container mx-auto px-4">
+
+    <!-- Hero Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">Report Emergencies. <span class="text-[#FF7F2A]">Tag. Send. Save.</span></h1>
+        <p class="mt-4 text-lg text-gray-300 max-w-xl">TagIT lets citizens quickly report emergencies and civic issues by selecting a tag, attaching media, and sending their location — authorities are notified automatically.</p>
+        <div class="mt-6 flex gap-4">
+          <a href="/tag.html?tag=Fire" class="px-6 py-3 bg-[#FF7F2A] rounded-md text-slate-900 font-semibold hover:scale-105 transform transition">Report Fire</a>
+          <a href="#tags" class="px-6 py-3 border border-gray-700 rounded-md hover:bg-gray-800 transition">Explore Tags</a>
+        </div>
+      </div>
+
+      <div class="bg-slate-800/50 rounded-xl p-6 shadow-lg">
+        <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=6b3a474f52b9e0e1f97cf374c24b0c6c" alt="emergency" class="rounded-lg w-full h-64 object-cover brightness-90">
+        <div class="mt-4 text-sm text-gray-300">Quick reporting, verified accounts, and escalation when necessary.</div>
+      </div>
+    </section>
+
+    <!-- Tags Section -->
+    <section id="tags" class="py-8">
+      <h2 class="text-2xl font-bold mb-4">Tags</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Violence -->
+        <a href="/tag.html?tag=Violence" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-user-shield fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">Violence</h3>
+          <p class="text-gray-400 text-sm">Report assault, harassment or threats. Confidential options available.</p>
+        </a>
+
+        <!-- Fire -->
+        <a href="/tag.html?tag=Fire" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-fire fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">Fire</h3>
+          <p class="text-gray-400 text-sm">Immediate fire incidents — send live location for fastest response.</p>
+        </a>
+
+        <!-- SOS -->
+        <a href="/tag.html?tag=SOS" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-triangle-exclamation fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">SOS</h3>
+          <p class="text-gray-400 text-sm">Personal safety alert. Sends location + media to nearest police.</p>
+        </a>
+
+        <!-- Health -->
+        <a href="/tag.html?tag=Health" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-hospital fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">Health Emergency</h3>
+          <p class="text-gray-400 text-sm">Medical emergencies — paramedics dispatch info to nearest facility.</p>
+        </a>
+
+        <!-- Animal -->
+        <a href="/tag.html?tag=Animal" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-paw fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">Animal Help</h3>
+          <p class="text-gray-400 text-sm">Injured or stray animals — notify animal rescue/municipal teams.</p>
+        </a>
+
+        <!-- Complaints -->
+        <a href="/tag.html?tag=Complaints" class="tag-card">
+          <div class="icon"><i class="fa-solid fa-building fa-2x"></i></div>
+          <h3 class="font-semibold text-xl mt-2 mb-1">Complaints</h3>
+          <p class="text-gray-400 text-sm">Report civic issues — broken roads, sewage, pollution to Nagar Nigam.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="py-8">
+      <h2 class="text-2xl font-bold mb-4">How TagIT Works</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+        <div class="feature-card text-center">
+          <div class="text-[#FF7F2A] text-3xl mb-2"><i class="fa-solid fa-tag"></i></div>
+          <h4 class="font-semibold">Select Tag</h4>
+          <p class="text-sm text-gray-400">Choose the appropriate tag for your incident.</p>
+        </div>
+        <div class="feature-card text-center">
+          <div class="text-[#FF7F2A] text-3xl mb-2"><i class="fa-solid fa-photo-film"></i></div>
+          <h4 class="font-semibold">Attach Media</h4>
+          <p class="text-sm text-gray-400">Upload photo or short video — evidence helps faster action.</p>
+        </div>
+        <div class="feature-card text-center">
+          <div class="text-[#FF7F2A] text-3xl mb-2"><i class="fa-solid fa-location-dot"></i></div>
+          <h4 class="font-semibold">Send Location</h4>
+          <p class="text-sm text-gray-400">Share live location or enter pincode and address.</p>
+        </div>
+        <div class="feature-card text-center">
+          <div class="text-[#FF7F2A] text-3xl mb-2"><i class="fa-solid fa-bell"></i></div>
+          <h4 class="font-semibold">Authority Contacted</h4>
+          <p class="text-sm text-gray-400">Nearest authority is notified. Track status via Dashboard
+            .</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  
+    <!-- Footer -->
+    <footer class="mt-12 py-8 border-t border-slate-700">
+      <div class="container mx-auto px-4 text-sm text-gray-400 flex justify-between">
+        <div>© TagIT — Prototype. For demo only.</div>
+        <div>Made with ❤️ · <a href="/dashboard.html" class="hover:text-[#FF7F2A]">Dashboard</a></div>
+      </div>
+    </footer>
+  
+    <script src="/static/app.js"></script>
+  </body>
+  </html>
+  
